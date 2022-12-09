@@ -15,7 +15,7 @@ setwd("~/Projeto")
 
 tabela01 <- read_csv("tabela01.csv")
 
-tabela01 <- tabela01 %>%
+#tabela01 <- tabela01 %>%
   group_by(municipios) %>%
   mutate(cumsum = cumsum(PG))
 
@@ -42,24 +42,26 @@ mapapg <- st_as_sf(mapapg)
 
 mapapg<- as(mapapg, "Spatial")
 
-proj4string(mapapg) 
+proj4string(mapapg)
 
 Encoding(mapapg$municipios) <- "UTF-8"
 
 pal <- colorBin("Greens",domain = NULL,n = 5)
 
-state_popup <- paste0("<strong>Estado: </strong>", 
-                      mapapg$municipios, 
-                      "<br><strong>Hectares: </strong>", 
+state_popup <- paste0("<strong>Estado: </strong>",
+                      mapapg$municipios,
+                      "<br><strong>Hectares: </strong>",
                       mapapg$Total)
 leaflet(data = mapapg) %>%
   addProviderTiles("CartoDB.Positron") %>%
-  addPolygons(fillColor = ~pal(mapapg$Total), 
+  addPolygons(fillColor = ~pal(mapapg$Total),
               fillOpacity = 1.0,
-              color = "#BDBDC3", 
+              color = "#BDBDC3",
               weight = 1,
               popup = state_popup) %>%
   addLegend("bottomright", pal = pal, values = ~mapapg$Total,
             title = "Área Colhida(ha)",
             opacity = 1)
+
+wri
 
