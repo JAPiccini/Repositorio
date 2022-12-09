@@ -5,9 +5,9 @@ library(data.table)
 setwd("~/Projeto")
 
 #Procedimento padrão para puxar a tabela original
-tabela01 <- read_delim("Tabela R 01.csv", 
-                       delim = ";", escape_double = FALSE, locale = locale(decimal_mark = ",", 
-                       grouping_mark = "."), trim_ws = TRUE, 
+tabela01 <- read_delim("Tabela R 01.csv",
+                       delim = ";", escape_double = FALSE, locale = locale(decimal_mark = ",",
+                       grouping_mark = "."), trim_ws = TRUE,
                        skip = 7)
 #Alterando o Cabeçalho
 tabela01 <- rename(tabela01, codigo = "Cód.", municipios = 'Brasil e Município')
@@ -36,8 +36,8 @@ tabela01$Soma_Cidade = rowSums(tabela01[,c(4:57)])
 
 #Realocando a Soma Para o Começo da Tabela
 tabela01 <- tabela01 %>%
-  relocate(Soma_Cidade, .before = "Abacaxi") 
-                         
+  relocate(Soma_Cidade, .before = "Abacaxi")
+
 #Somando as Colunas e Removendo as Totais
 teste01 <- tabela01 %>%
   summarise_if(is.numeric, sum)
@@ -79,9 +79,7 @@ write.csv(tabela03D, 'tabela03D.csv', fileEncoding = "UTF-8")
 #tabela01 = tabela original com os dados
 #teste01 = tabela01 com a soma dos hectares plantados por cidade
 #teste01t = teste01 transposta (vizualização do cultivo com + hectares plantados)
-#tabela02 = filtro > 0 da tabela01 
-#tabela03 = tabela02 somada para saber quais produtos são os mais/menos cultivados   
+#tabela02 = filtro > 0 da tabela01
+#tabela03 = tabela02 somada para saber quais produtos são os mais/menos cultivados
 #tabela03_ = tabela03 ordenada do maior para o maior
-
-
 
