@@ -62,6 +62,4 @@ leaflet(data = mapapg) %>%
   addLegend("bottomright", pal = pal, values = ~mapapg$Total,
             title = "Área Colhida(ha)",
             opacity = 1)
-
-wri
-
+saveRDS(mapapg, file = "mapapg.rds")
