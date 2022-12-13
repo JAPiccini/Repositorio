@@ -1,6 +1,8 @@
 library(shiny)
 library(leaflet)
 
+#Server definirá o funcionamento do app Shiny
+
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
 
