@@ -52,9 +52,10 @@ mapapg<- as(mapapg, "Spatial")
 #Definindo a projeção o mapa
 proj4string(mapapg)
 
-
+#Definindo o formato da coluna municipios
 Encoding(mapapg$municipios) <- "UTF-8"
 
+#Definindo legendas e coloração do mapa
 pal <- colorBin("Greens",domain = NULL,n = 5)
 
 state_popup <- paste0("<strong>Estado: </strong>",
@@ -71,4 +72,6 @@ leaflet(data = mapapg) %>%
   addLegend("bottomright", pal = pal, values = ~mapapg$Total,
             title = "Área Colhida(ha)",
             opacity = 1)
+
+#Salvando o arquivo no formato para utilizá-lo no Shiny
 saveRDS(mapapg, file = "mapapg.rds")

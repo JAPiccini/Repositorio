@@ -1,30 +1,20 @@
 library(shiny)
 library(leaflet)
-library(datasets)
+library(RColorBrewer)
 
 #UI (do inglês, user interface) definirá a aparência do aplicativo Shiny
 ui <- fluidPage(
-  fluidPage(titlePanel = "Mapa Lavoura Temporária", #Inserindo título na página
-            hr(), # inserir uma linha,
-            img(scr="https://via.placeholder.com/150"), #URL para inserir uma img na pag futuramente
-            "Área Colhida em Hectares",
-            #hr(), # inserir uma linha,
-            leafletOutput("mapapg")),
-  # Gerando uma linha com uma barra lateral
-  sidebarLayout(
+            titlePanel = "Mapa Lavoura Temporária", #Inserindo título na página
+            sidebarLayout(
+              sidebarPanel(
+                selectizeInput("municipio", "Selecione um município", choices = c("All",unique(mapapg$municipios))),
+                selectizeInput("cultivo", "Selecione um cultivo", choices = c("All",unique(mapapg$Total))),
+                actionButton("goButton", "Atualizar"),
+            leafletOutput("mapapg"))
 
-    # Defindo a barra lateral com uma entrada
-    sidebarPanel(
-      selectInput("municipios", "Municípios:",
-                  choices=colnames(mapapg)),
-      hr(),
-      helpText("Dados do Censo Agropecuário 2017 IBGE.")
-    ),
-
-    # Criando um local para o gráfico de barras
-    mainPanel(
-      plotOutput("mapa")
-    )
-
-))
-
+,
+mainPanel(
+  tabsetPanel(
+    tabPanel(plotOutput("mapapg"), width = "100%", height = "1000px")
+  )
+)))

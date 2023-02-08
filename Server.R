@@ -1,10 +1,29 @@
 library(shiny)
 library(leaflet)
+library(ggplot2)
 
 #Server definirá o funcionamento do app Shiny
+data1 <- reactive({
+  if(input$municipio == "All"){
+    mapapg
+  }else{
+    mapapg[mapapg$municipios == input$municipios,]
+  }
+})
 
-# Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+data2 <- reactive({
+  if(input$cultivo == "All"){
+    mapapg
+  }else{
+    mapapg[mapapg$Total == input$cultivo,]
+  }
+})
+
+data4 <- eventReactive(input$goButton, {
+  data3()
+})
+# Define server logic para fazer o mapa no Shiny
+shinyServer(function(input, output, session) {
 
   output$mapapg <- renderLeaflet({
     pal <- colorBin("Greens",domain = NULL,n = 5)
@@ -27,5 +46,3 @@ shinyServer(function(input, output) {
 
 
 })
-
-
