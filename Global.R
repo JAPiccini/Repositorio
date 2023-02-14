@@ -14,4 +14,5 @@ library(dplyr)
 library(rgdal)
 
 
-mapapg <- brasileiropg <- readRDS("~/Projeto/mapapg.rds")
+mapapg <- readRDS("~/Projeto/mapapg1.rds")
+
