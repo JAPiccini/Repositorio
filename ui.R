@@ -1,20 +1,28 @@
 library(shiny)
+library(shinyWidgets)
 library(leaflet)
-library(RColorBrewer)
+library(tidyverse)
 
 #UI (do inglês, user interface) definirá a aparência do aplicativo Shiny
-ui <- fluidPage(
-            titlePanel = "Mapa Lavoura Temporária", #Inserindo título na página
-            sidebarLayout(
-              sidebarPanel(
-                selectizeInput("municipio", "Selecione um município", choices = c("All",unique(mapapg$municipios))),
-                selectizeInput("cultivo", "Selecione um cultivo", choices = c("All",unique(mapapg$Total))),
-                actionButton("goButton", "Atualizar"),
-            leafletOutput("mapapg"))
+ui <- bootstrapPage(
+  leafletOutput("map", width = "100%", height = "100%"),
 
-,
-mainPanel(
-  tabsetPanel(
-    tabPanel(plotOutput("mapapg"), width = "100%", height = "1000px")
-  )
-)))
+  absolutePanel(right = 0,
+                pickerInput("estados", label = "Selecione um Estado:",
+                choices = list("Todos os Estados",
+                               "Amapá", "Roraima", "Acre", "Amazonas", "Pará",
+                               "Maranhão", "Piauí", "Ceará", "Rio Grande do Norte",
+                               "Pernambuco", "Paraíba", "Alagoas", "Sergipe",
+                               "Tocantins", "Rondônia", "Goiás", "Distrito Federal",
+                               "Mato Grosso", "Bahia", "Minas Gerais", "Espírito Santo",
+                               "São Paulo", "Rio de Janeiro", "Paraná", "Santa Catarina",
+                               "Rio Grande do Sul")),
+                options = list(
+
+                  'live-search' = TRUE)
+
+
+
+ )
+)
+
