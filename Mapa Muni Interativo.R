@@ -9,6 +9,7 @@ library(RColorBrewer)
 library(leaflet)
 library(readr)
 library(janitor)
+library(spData)
 
 #Definindo o diretório padrão
 setwd("~/Projeto")
@@ -35,6 +36,9 @@ shapefile <- subset( shapefile, select = -municipios )
 #Juntado os shapes com os dados
 mapapg <- full_join(tabela01, shapefile, by = 'codigo')
 
+#Juntando os estados com os municípios
+mapapg <- inner_join(mapapg, ibge, by = 'codigo')
+
 #Alterando NAs para 0
 mapapg[is.na(mapapg)] <- 0
 
@@ -56,9 +60,9 @@ proj4string(mapapg)
 Encoding(mapapg$municipios) <- "UTF-8"
 
 #Definindo legendas e coloração do mapa
-pal <- colorBin("Greens",domain = NULL,n = 5)
+pal <- colorBin(palette = "Greens", domain = mapapg@data$Total , na.color="transparent")
 
-state_popup <- paste0("<strong>Estado: </strong>",
+state_popup <- paste0("<strong>Município: </strong>",
                       mapapg$municipios,
                       "<br><strong>Hectares: </strong>",
                       mapapg$Total)
@@ -74,4 +78,4 @@ leaflet(data = mapapg) %>%
             opacity = 1)
 
 #Salvando o arquivo no formato para utilizá-lo no Shiny
-saveRDS(mapapg, file = "mapapg.rds")
+saveRDS(mapapg, file = "mapapg1.rds")
