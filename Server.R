@@ -1,34 +1,15 @@
 library(shiny)
 library(leaflet)
-library(ggplot2)
+library(tidyverse)
+library(shinyWidgets)
 
-#Server definirá o funcionamento do app Shiny
-data1 <- reactive({
-  if(input$municipio == "All"){
-    mapapg
-  }else{
-    mapapg[mapapg$municipios == input$municipios,]
-  }
-})
-
-data2 <- reactive({
-  if(input$cultivo == "All"){
-    mapapg
-  }else{
-    mapapg[mapapg$Total == input$cultivo,]
-  }
-})
-
-data4 <- eventReactive(input$goButton, {
-  data3()
-})
 # Define server logic para fazer o mapa no Shiny
-shinyServer(function(input, output, session) {
+shinyServer <- function(input, output, session) {
 
-  output$mapapg <- renderLeaflet({
-    pal <- colorBin("Greens",domain = NULL,n = 5)
+  output$map <- renderLeaflet({
+    pal <- colorBin(palette = "Greens", domain = mapapg@data$Total , na.color="transparent")
 
-    state_popup <- paste0("<strong>Estado: </strong>",
+    state_popup <- paste0("<strong>Município: </strong>",
                           mapapg$municipios,
                           "<br><strong>Hectares: </strong>",
                           mapapg$Total)
@@ -44,5 +25,11 @@ shinyServer(function(input, output, session) {
                 opacity = 1)
   })
 
-
-})
+  filteredData <- reactive({
+    if(input$estados == "Todos os Estados") {
+      mapapg
+    } else {
+      filter(mapapg, Estados ==input$estados)
+    }
+  })
+}
