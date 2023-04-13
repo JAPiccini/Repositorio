@@ -15,67 +15,69 @@ library(spData)
 setwd("~/Projeto")
 
 #Lendo o arquivo com os dados de lavoura temporária
-tabela01 <- read_csv("tabela01.csv")
+tabela01munic <- read_csv("tabela01munic.csv")
 
 #Definindo que o arquivo mude para dataframe
-tabela01 <- as.data.frame(tabela01)
+tabela01munic <- as.data.frame(tabela01munic)
 
 #Lendo o arquivo com a localização dos municípios
-shapefile <- st_read(here("br_municipios_2017", "BRMUE250GC_SIR.shp"))
+municshp <- st_read(here("br_municipios", "BRMUE250GC_SIR.shp"))
 
 #Renomeando colunas do arquivo
-shapefile <- setNames(shapefile, c("municipios","codigo", "geometry"))
+municshp <- setNames(municshp, c("municipios","codigo", "geometry"))
 
 #Alterando o formato da coluna do arquivo
-shapefile <- shapefile%>%
+municshp <- municshp %>%
   mutate(across(c(codigo), as.numeric))
 
 #Reirando a coluna municipios do arquivo( Municípios com escrita desconfigurada)
-shapefile <- subset( shapefile, select = -municipios )
+municshp <- subset( municshp, select = -municipios )
 
 #Juntado os shapes com os dados
-mapapg <- full_join(tabela01, shapefile, by = 'codigo')
+municmapapg <- full_join(tabela01munic, municshp, by = 'codigo')
 
-#Juntando os estados com os municípios
-mapapg <- inner_join(mapapg, ibge, by = 'codigo')
+
+#Juntando os estados com os municípios          ATENÇÃO, NÃO ENCONTROU A COLUNA IBGE
+municmapapg <- inner_join(municmapapg, ibge, by = 'codigo')
 
 #Alterando NAs para 0
-mapapg[is.na(mapapg)] <- 0
+municmapapg[is.na(municmapapg)] <- 0
 
 #Alterando a configuraçõ das colunas
-mapapg <- mapapg %>%
+municmapapg <- municmapapg %>%
   mutate(across(!municipios, as.numeric))%>%
-  mutate(across(c(codigo,municipios), as.numeric))
+  mutate(across(c(codigo,municipios), as.numeric)) # NESTA ULTIMA LINHA VC ESTÁ TRANSFORMANDO CODIGO E MUNICIPIOS EM NUMERICO. É ISSO?
 
 #Alterando o formato do arquivo
-mapapg <- st_as_sf(mapapg)
+municmapapg <- st_as_sf(municmapapg)
 
 #Alterando  formato do arquivo novamente
-mapapg<- as(mapapg, "Spatial")
+municmapapg<- as(municmapapg, "Spatial")
 
 #Definindo a projeção o mapa
-proj4string(mapapg)
+proj4string(municmapapg)
 
 #Definindo o formato da coluna municipios
-Encoding(mapapg$municipios) <- "UTF-8"
+Encoding(municmapapg$municipios) <- "UTF-8"
 
 #Definindo legendas e coloração do mapa
-pal <- colorBin(palette = "Greens", domain = mapapg@data$Total , na.color="transparent")
+pal <- colorBin(palette = "Greens", domain = municmapapg@data$Total , na.color="transparent")
 
 state_popup <- paste0("<strong>Município: </strong>",
-                      mapapg$municipios,
+                      municmapapg$municipios,
                       "<br><strong>Hectares: </strong>",
-                      mapapg$Total)
-leaflet(data = mapapg) %>%
+                      municmapapg$Total)
+
+leaflet(data = municmapapg) %>%
   addProviderTiles("CartoDB.Positron") %>%
-  addPolygons(fillColor = ~pal(mapapg$Total),
+  addPolygons(fillColor = ~pal(municmapapg$Total),
               fillOpacity = 1.0,
               color = "#BDBDC3",
               weight = 1,
               popup = state_popup) %>%
-  addLegend("bottomright", pal = pal, values = ~mapapg$Total,
+  addLegend("bottomright", pal = pal, values = ~municmapapg$Total,
             title = "Área Colhida(ha)",
             opacity = 1)
 
 #Salvando o arquivo no formato para utilizá-lo no Shiny
-saveRDS(mapapg, file = "mapapg1.rds")
+saveRDS(municmapapg, file = "mapapg1.rds")
