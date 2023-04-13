@@ -5,7 +5,7 @@ library(data.table)
 setwd("~/Projeto")
 
 #Procedimento padrão para puxar a tabela original
-tabela01 <- read_delim("Tabela R 01.csv",
+tabela01 <- read_delim("01Tab6957.csv",
                        delim = ";", escape_double = FALSE, locale = locale(decimal_mark = ",",
                        grouping_mark = "."), trim_ws = TRUE,
                        skip = 7)
